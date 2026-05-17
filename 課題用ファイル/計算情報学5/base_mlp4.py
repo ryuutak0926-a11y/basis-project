@@ -13,7 +13,7 @@ class NNet(nn.Module):
         self.l2 = nn.Linear(h1_size, h1_size)
         self.l3 = nn.Linear(h1_size, h1_size)
         self.l4 = nn.Linear(h1_size, out_size)
-        self.act = nn.Sigmoid()
+        self.act = nn.ReLU()
 
     def forward(self, x):
         h1 = self.act(self.l1(x))
@@ -50,7 +50,7 @@ print(model)
 criterion = nn.CrossEntropyLoss()
 
 # 最適化法：SGD（確率的勾配降下法）
-optimizer = torch.optim.SGD(model.parameters(), lr=0.01)
+optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
 
 
 def train_model(model, train_loader, criterion, optimizer, device):

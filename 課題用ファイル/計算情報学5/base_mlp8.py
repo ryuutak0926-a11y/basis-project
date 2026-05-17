@@ -10,12 +10,16 @@ class NNet(nn.Module):
     def __init__(self, in_size, h1_size, out_size):
         super().__init__()
         self.l1 = nn.Linear(in_size, h1_size)
-        self.l2 = nn.Linear(h1_size, out_size)
+        self.l2 = nn.Linear(h1_size, h1_size)
+        self.l3 = nn.Linear(h1_size, h1_size)
+        self.l4 = nn.Linear(h1_size, out_size)
         self.act = nn.ReLU()
 
     def forward(self, x):
         h1 = self.act(self.l1(x))
-        y = self.l2(h1)
+        h2 = self.act(self.l2(h1))
+        h3 = self.act(self.l3(h2))
+        y = self.l4(h3)
         return y
 
 
@@ -36,7 +40,7 @@ test_loader = torch.utils.data.DataLoader(dataset=test_data,
                                           shuffle=True)
 
 in_size = 28*28
-h1_size = 512
+h1_size = 2048
 out_size = 10
 device = 'cpu' # 'cuda' if torch.cuda.is_available() else 'cpu'
 model = NNet(in_size, h1_size, out_size).to(device)
