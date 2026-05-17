@@ -1,0 +1,344 @@
+--- Page 1 ---
+画像判別（２）
+--- Page 2 ---
+1 はじめに
+手書き文字認識データセットである MNIST デー
+タセットを用いて，画像を説明変数として手書き
+文字認識を行う方法を実習した．そこではScikite
+Learnを用いたが，今回は自分でニューラルネッ
+トワークを定義する方法を実習する．これは，将
+来的に，畳み込みニューラルネットワーク
+(Convolutional Neural Network, CNN) を用いる
+方法について実習する前提として，自分でネット
+ワーク構造を定義する方法について学ぶためで
+--- Page 3 ---
+ある．
+--- Page 4 ---
+2 画像を説明変数とする方法
+画像を説明変数とする方法には以下のような例が
+ある．
+• 画像のビット単位の情報を説明変数とする．
+• CNN を用いて画像から抽出した特徴を説明変
+数とする．
+• CNN に入力するする前に，事前に画素の輝度
+差，コントラスト，形状情報等を数値データ化
+して利用する．
+• 画像データとテキスト（メタデータ）や数値
+--- Page 5 ---
+データを同時に説明変数として利用する． （マ
+ルチモーダル学習）
+このうち古くから行われていたのが，先日実習し
+た１の方法である．今回は２について実習する．
+--- Page 6 ---
+3 画像を説明変数とする方法
+１の方法では，画素ごとに数値化して，それを左
+上から右下の画素に向けて一列に並べるようにし
+て説明変数とする．このため，２次元空間におけ
+る上下左右の関係が壊れてしまう．
+２の方法では，２次元空間における上下左右の関
+係を保持したまま，空間における画像の特徴量を
+扱うことができる．ただ，それがどのような特徴
+量であるかわかりにくい（説明しにくい）ことが
+ある．
+--- Page 7 ---
+4 MLP の復習
+前回の講義においては Scilit-learnを用いたので，
+ネットワーク構造を自分で構成することができな
+かった．最初にこの点を学習していくことと
+する．
+そのために，今回はpytorchを利用する．あわせ
+て，MNIST のデータについてもpytorchを利用す
+ることから説明を始める．
+--- Page 8 ---
+5 ライブラリの準備
+CNN を利用する場合，KERAS.tensolflowや
+pytorchを利用する．ここでは pytorchを利用する
+こととする．
+環境を整備するためにインストールのであるが，
+1 https :// pytorch .org/
+へアクセスするとインストール方法が示される．
+例えば以下のようになる．
+1 pip3 install torch torchvision --index -url https :// download . pytorch
+.org/whl/cu126
+--- Page 9 ---
+6 MNIST とは (1)
+• 手書き数字を認識するために用いられる画像
+データセット
+• 手書き数字のグレイスケール画像 (image) デー
+タと，数字を表すラベル(label) データから
+なる．
+• 画像データは28 行 28 列のグレイスケールの数
+値を１次元に配列に格納している．
+• scikit-learnやkerasなどのデータセットから利
+用できる．
+--- Page 10 ---
+7 MNIST とは (2)
+1 import torch
+2 import torchvision
+3 import torchvision . transforms as transforms
+4 import matplotlib .pyplot as mpl
+5
+6 train_data = torchvision . datasets .MNIST(root ='./data ',
+7 train=True ,
+8 transform = transforms .
+ToTensor (),
+9 download = True)
+10 train_loader = torch.utils.data. DataLoader (dataset =train_data ,
+11 batch_size =256 ,
+12 shuffle =True)
+13
+14 test_data = torchvision . datasets .MNIST(root ='./data ',
+15 train=False ,
+16 transform = transforms .
+ToTensor (),
+17 download = True)
+18 test_loader = torch.utils.data. DataLoader ( dataset =test_data ,
+--- Page 11 ---
+19 batch_size =256 ,
+20 shuffle =True)
+21
+22 fig , label = train_dataset [0]
+23 print (" fig : {}, label : {}". format(fig ,label ))
+24 mpl.imshow(fig.view (-1,28), cmap=mpl.cm.gray)
+25 mpl.show ()
+
+--- Page 12 ---
+8 プログラム例の説明
+• 1 行目から4 行目：Pytorchのライブラリをイン
+ポートする．
+• 6 行目から12 行目：学習データを導入する．
+• 14 行目から20 行目：テストデータを導入する．
+• 22 行目から25 行目：MNIST の最初の画像デー
+タを表示する．
+--- Page 13 ---
+9 ニューロンモデル
+y = g(
+n∑
+i=1
+wixi − θ) (1)
+• 入力: x = {x1, x2, · · · , xn}
+• 出力: y
+• 重み係数 w = {w1, w2, · · · , wn}
+• 閾値 θ
+• 活性化関数 (伝達関数) g()
+閾値 θ を超えたときに，活性化関数が出力する．
+--- Page 14 ---
+10 活性化関数(1)
+• ステップ関数
+g(x) =
+{
+1 x > 0
+0 x < 0 (2)
+• 対称型関数
+g(x) = tanh( x) (3)
+--- Page 15 ---
+11 活性化関数(2)
+• 線形関数
+g(x) = x (4)
+• ReLU 関数
+g(x) =
+{
+x 0 < x
+0 x ≤ 0 (5)
+--- Page 16 ---
+12 活性化関数(3)
+• シグモイド関数
+g(x) = 1
+1 + e−x (6)
+• Softmax 関数（k = 2 においてシグモイド関数
+に一致する）
+g(x) = exi
+∑K
+j=1 exj
+(7)
+--- Page 17 ---
+13 誤差逆伝播
+閾値や重み係数を決定するために誤差逆伝播
+(Back Propagation method) を用いる．
+1. 入力 x と出力 y の正しい組み合わせ（教師信
+号）を多数用意する．
+2. 重み w と閾値θ をランダムに与える．
+3. 入力 x を与えて出力y′ を得る．
+4. y′ と教師信号 y の差を最小にするようにパラ
+メータを更新する．
+5. 3,4 を繰り返す．
+--- Page 18 ---
+14 損失関数
+• y′ と教師信号 y の差を評価するために損失関数
+(Loss Function) を用いる．
+• 判別問題や回帰問題など，問題に応じた異なる
+損失関数を用いる．
+• 判別問題では交差エントロピー関数を用いるこ
+とが多い．
+• 回帰問題では平均二乗誤差 (Mean Squared
+Error, MSE): 等を用いる．
+--- Page 19 ---
+15 最適化手法
+閾値や重み係数を決定するために最適化手法が用
+いられる．代表的な方法に以下の方法がある．
+• 最急降下法 (Gradient Descent Method, GDM)
+• Adaptive Gradient algorithm (AdaGrad)
+• AdaDelta algorithm
+• RMSprop (RMS) algorithm
+• Momentum algorithm
+• Adaptive Moment Estimation (Adam)
+algorithm
+--- Page 20 ---
+16 MLP によって MNIST を判別
+するプログラム例
+1 import torch
+2 import torch.nn as nn
+3 import torch.nn. functional as F
+4 import torchvision
+5 import torchvision . transforms as transforms
+6 import matplotlib .pyplot as mpl
+7
+8 class NNet(nn.Module ):
+9 def __init__ (self , in_size , h1_size , out_size ):
+10 super (). __init__ ()
+11 self.l1 = nn.Linear(in_size , h1_size )
+12 self.l2 = nn.Linear(h1_size , out_size )
+13 self.act = nn. Sigmoid ()
+14
+15 def forward (self , x):
+16 h1 = self.act(self.l1(x))
+17 y = self.l2(h1)
+--- Page 21 ---
+18 return y
+19
+20
+21 train_data = torchvision . datasets .MNIST(root ='./data ',
+22 train=True ,
+23 transform = transforms . ToTensor (),
+24 download = True)
+25 train_loader = torch.utils.data. DataLoader (dataset =train_data ,
+26 batch_size =256 ,
+27 shuffle =True)
+28
+29 test_data = torchvision . datasets .MNIST(root ='./data ',
+30 train=False ,
+31 transform = transforms . ToTensor (),
+32 download = True)
+33 test_loader = torch.utils.data. DataLoader ( dataset =test_data ,
+34 batch_size =256 ,
+35 shuffle =True)
+36
+37 in_size = 28*28
+38 h1_size = 1024
+39 out_size = 10
+--- Page 22 ---
+40 device = 'cpu ' # 'cuda ' if torch.cuda. is_available () else 'cpu '
+41 model = NNet(in_size , h1_size , out_size ).to(device)
+42 print(model)
+43
+44 # 損 失 関 数 ： 交 差 エ ン ト ロ ピ ー 誤 差 関 数
+45 criterion = nn. CrossEntropyLoss ()
+46
+47 # 最 適 化 法 ： SGD （ 確 率 的 勾 配 降 下 法 ）
+48 optimizer = torch.optim.SGD(model. parameters (), lr =0.01)
+49
+50
+51 def train_model (model , train_loader , criterion , optimizer , device ):
+52 train_loss = 0.0
+53 num_train = 0
+54 model.train () # 学 習 モ ー ド
+55
+56 for i, (images , labels) in enumerate ( train_loader ):
+57 num_train += len(labels)
+58
+59 images , labels = images.view(-1, 28*28). to(device), labels.
+to(device)
+60
+--- Page 23 ---
+61 optimizer . zero_grad ()
+62 outputs = model(images)
+63 loss = criterion (outputs , labels)
+64 loss. backward ()
+65 optimizer .step ()
+66 train_loss += loss.item ()
+67
+68 train_loss = train_loss / num_train
+69
+70 return train_loss
+71
+72
+73 def test_model (model , test_loader , criterion , device ):
+74 test_loss = 0.0
+75 num_test = 0
+76 model.eval () # 評 価 モ ー ド
+77
+78 with torch. no_grad ():
+79 for i, (images , labels) in enumerate ( test_loader ):
+80 num_test += len(labels)
+81 images , labels = images.view(-1, 28*28). to(device),
+labels.to(device)
+--- Page 24 ---
+82 outputs = model(images)
+83 loss = criterion (outputs , labels)
+84 test_loss += loss.item ()
+85 test_loss = test_loss / num_test
+86 return test_loss
+87
+88
+89 def lerning (model , train_loader , test_loader , criterion , optimizer ,
+num_epochs , device ):
+90 train_loss_list = []
+91 test_loss_list = []
+92
+93 for epoch in range (1, num_epochs +1, 1):
+94 train_loss = train_model (model , train_loader , criterion ,
+optimizer , device)
+95 test_loss = test_model (model , test_loader , criterion ,
+device)
+96 print ("{} train_loss : {:.5f} test_loss : {:.5f}" .
+format(epoch , train_loss , test_loss ))
+97 train_loss_list .append( train_loss )
+98 test_loss_list .append( test_loss )
+99 return train_loss_list , test_loss_list
+--- Page 25 ---
+100
+101
+102 num_epochs = 10
+103 train_loss_list , test_loss_list = lerning(model , train_loader ,
+test_loader , criterion , optimizer , num_epochs , device=device)
+104
+105 mpl.plot(range(len( train_loss_list )), train_loss_list , c='b', label
+='train loss ')
+106 mpl.plot(range(len( test_loss_list )), test_loss_list , c='r', label='
+test loss ')
+107 mpl.xlabel (" epoch ")
+108 mpl.ylabel (" loss ")
+109 mpl.legend ()
+110 mpl.grid ()
+111 mpl.show ()
+--- Page 26 ---
+
+--- Page 27 ---
+17 プログラム例の説明
+• 8 行目から18 行目：ネットワークの定義．今回
+は中間層は 1 層となっている．活性化関数はシ
+グモイド関数Sigmoid() である．入力変数はx,
+出力変数は y，中間変数は h1 となっている．
+• 37 行目から42 行目：ネットワークパラメータ
+を定義し，表示する．
+• 44 行目から48 行目：損失関数と最適化法を定
+義する．
+• 51 行目から70 行目：モデル学習の定義
+--- Page 28 ---
+• 73 行目から86 行目：モデルテストの定義
+• 89 行目から99 行目：学習プロセスの定義
+• 102 行目から111 行目：学習し，結果を出力
+する．
+プログラムにおいて，8 行目から18 行目の定義を
+変更すればネットワークを変更できる．また，44
+行目から48 行目の損失関数と最適化法の定義も
+適時変更する必要がある．
+--- Page 29 ---
+18 演習問題
+• 中間層のノード数をそれぞれ 1/2,2 倍として実
+験して精度や計算時間を比較しなさい．
+• ネットワークの中間層を2 層，3 層と増やして
+みなさい．
+• その場合において，中間層のノード数をそれぞ
+れ1/2,2 倍として実験して精度や計算時間を比
+較しなさい．
