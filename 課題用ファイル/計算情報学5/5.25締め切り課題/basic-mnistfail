@@ -1,0 +1,28 @@
+import matplotlib.pyplot as mpl
+from sklearn.ensemble import RandomForestClassifier as RFC
+
+from sklearn.datasets import fetch_openml
+mnist = fetch_openml('mnist_784', as_frame=False)
+
+x = mnist.data.reshape (70000 , 784) / 255
+y = mnist.target.astype(int)
+
+model = RFC(random_state =0)
+model.fit(x, y)
+scr = model.score(x, y)
+
+yres = model.predict(x)
+
+print(" Prediction accuracy =", scr)
+print(yres)
+
+from sklearn.metrics import classification_report
+print(classification_report(y,yres))
+
+from sklearn.metrics import confusion_matrix
+cm = confusion_matrix(y,yres)
+print(cm)
+
+import seaborn as sns
+sns.heatmap(cm, annot=True , cmap='Blues')
+mpl.show()
