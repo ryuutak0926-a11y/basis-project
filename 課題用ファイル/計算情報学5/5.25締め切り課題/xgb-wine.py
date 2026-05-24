@@ -1,14 +1,15 @@
 import pandas as pd
-from sklearn.ensemble import AdaBoostClassifier as ABC
+from xgboost import XGBClassifier as XGBC
 
 url = "http://pythondatascience.plavox.info/wp-content/uploads/2016/07/winequality-red.csv"
 df = pd.read_csv(url , sep=';')
 df.to_csv('winequality-red.csv')
 
 x = df[['fixed acidity', 'volatile acidity', 'citric acid', 'residual sugar', 'chlorides', 'free sulfur dioxide', 'total sulfur dioxide']]
-y = df['quality']
+# XGBoost用にクラスラベルを 0〜5 に調整（最小値である 3 を引く）
+y = df['quality'] - df['quality'].min()
 
-model = ABC(random_state =0)
+model = XGBC(random_state =0)
 model.fit(x, y)
 scr = model.score(x, y)
 
