@@ -53,5 +53,16 @@ plt.ylabel('u')
 plt.legend()
 plt.show()
 
-def loss_func(model, t, T_initial, T_env, k):
+def loss_func_cooling(model, t, T_initial, T_env, k):
+    # 初期条件（t = 0 における温度が T_initial になるように）の損失
+    t_bc = torch.tensor([[0.0]], requires_grad=True)
+    loss_bc = torch.mean((model(t_bc) - T_initial)**2)
     
+    # 物理法則 (PDE) の損失 (dT/dt + k * (T - T_env) = 0)
+    t.requires_grad = True
+    T = model(t)
+    T_t = torch.autograd.grad(T, t, grad_outputs=torch.ones_like(T), create_graph=True)[0]
+    residual = T_t + k * (T - T_env)
+    loss_pde = torch.mean(residual**2)
+    
+    return loss_bc + loss_pde
