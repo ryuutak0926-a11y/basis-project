@@ -128,7 +128,7 @@ plot(history_S,
 )
 lines(history_M, col = "green")
 lines(history_B, col = "red")
-legend("topleft", legend = c("株価 (S)", "マネー (M)", "債券 (B)"), col = c("blue", "green", "red"), lty = 1)
+legend("topleft", legend = c("株価 (S)", "マネー (M)", "安定資産 (B)"), col = c("blue", "green", "red"), lty = 1)
 
 plot(history_R,
   type = "l", col = "purple",
