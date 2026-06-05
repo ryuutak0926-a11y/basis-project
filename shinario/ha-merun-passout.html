@@ -16,7 +16,7 @@
             padding: 0;
         }
 
-        /* ▼ 1. 通常のブログエリアのデザイン ▼ */
+        /* ▼ 1. 日常ブログエリアのデザイン ▼ */
         #normalBlogArea {
             max-width: 600px;
             margin: 50px auto;
@@ -26,34 +26,44 @@
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
         }
 
-        /* ▼ 2. 隠しエリア（パスワード突破後に表示） ▼ */
+        /* 日常ブログの記事ごとの枠 */
+        .blog-post {
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 20px;
+            margin-bottom: 20px;
+        }
+
+        .blog-post h3 {
+            margin-top: 0;
+            color: #444;
+        }
+
+        .blog-date {
+            font-size: 12px;
+            color: #888;
+        }
+
+        /* ▼ 2. ロック画面エリア（最初は非表示） ▼ */
+        #lockScreenArea {
+            display: none;
+            /* 初期状態では隠す */
+            max-width: 600px;
+            margin: 50px auto;
+            background-color: #ffffff;
+            padding: 50px 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        /* ▼ 3. 隠しエリア（パスワード突破後に表示） ▼ */
         #secretBlackArea {
             display: none;
-            /* 初期状態では消しておく */
-            padding: 20px;
+            /* 初期状態では隠す */
+            height: 100vh;
+            padding-top: 150px;
             box-sizing: border-box;
             color: #ffffff;
-            /* 基本の文字色は白（ヘッダー等のため） */
-            font-family: 'Courier New', monospace;
-            /* システム風のフォント */
-        }
-
-        /* 画面上部のシステム風ヘッダー（リファレンス再現） */
-        .system-header {
-            font-size: 14px;
-            border-bottom: 1px solid #333;
-            padding-bottom: 10px;
-            margin-bottom: 40px;
-            color: #888888;
-        }
-
-        /* 狂気を煽る赤文字 */
-        .red-message {
-            color: #ff0000;
-            text-align: center;
-            font-size: 20px;
-            letter-spacing: 2px;
-            margin-top: 50px;
         }
 
         /* 隠しテキスト（背景と同化する黒文字） */
@@ -73,33 +83,51 @@
 <body>
 
     <div id="normalBlogArea">
-        <h2 style="border-bottom: 2px solid #333; padding-bottom: 10px;">【シークレットライブ告知】※閲覧制限</h2>
-        <p>この記事は保護されています。閲覧するには4桁のPASSを入力してください。</p>
+        <h2 style="border-bottom: 2px solid #333; padding-bottom: 10px;">PIPER OFFICIAL BLOG</h2>
 
-        <div style="text-align: center; margin-top: 30px;">
+        <div class="blog-post">
+            <h3>新しい機材を導入しました</h3>
+            <p class="blog-date">202X.05.10</p>
+            <p>最近、音の鳴りが少し気になっていたので、新しいミキサーとマイクを導入しました。これでさらに良い音をみんなに届けられると思います。深夜の作業が捗りますね。</p>
+        </div>
+
+        <div class="blog-post">
+            <h3>雨の日の散歩</h3>
+            <p class="blog-date">202X.05.15</p>
+            <p>雨の音は好きです。すべてを洗い流してくれるような気がして。今日も良いインスピレーションが湧きそうです。次のトラックを楽しみにしていてください。</p>
+        </div>
+
+        <div style="text-align: center; margin-top: 40px;">
+            <button onclick="goToLockScreen()"
+                style="padding: 10px 20px; font-size: 16px; cursor: pointer; background-color: #e0e0e0; color: #333; border: none; border-radius: 4px;">次のページ（古い記事）へ</button>
+        </div>
+    </div>
+
+    <div id="lockScreenArea">
+        <h2 style="color: #d9534f; letter-spacing: 2px;">【制限エリア】</h2>
+        <p style="font-weight: bold; line-height: 1.8; margin-bottom: 30px;">
+            このページはゲストの方は閲覧が出来ません<br>
+            パスワードを入力してください
+        </p>
+
+        <div style="text-align: center;">
             <input type="password" id="articlePass" placeholder="****"
                 style="padding: 10px; font-size: 16px; width: 120px; text-align: center; letter-spacing: 5px;">
+            <br><br>
             <button onclick="unlockArticle()"
-                style="padding: 10px 20px; font-size: 16px; cursor: pointer; background-color: #333; color: #fff; border: none; border-radius: 4px;">解除</button>
+                style="padding: 10px 30px; font-size: 16px; cursor: pointer; background-color: #333; color: #fff; border: none; border-radius: 4px;">OK</button>
             <p id="passError" style="color: red; display: none; margin-top: 15px;">[ERROR] パスワードが一致しません。</p>
         </div>
     </div>
 
     <div id="secretBlackArea">
 
-        <div class="system-header">
-            grandpasdedeux * TALENT * CONTACT * VISION * ABOUT US <br>
-            【LV 3 (P 40/125)】<br><br>
-            2024.10.22 2026.05.24 内部資料：????<br>
-            ＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊
-        </div>
-
-        <div class="red-message">
+        <div style="color: #ff0000; text-align: center; font-size: 24px; letter-spacing: 2px; font-family: serif;">
             大人たちには秘密の場所へ<br>
             さあ、目を開いて真実を見つけて。
         </div>
 
-        <div class="hidden-text">
+        <div class="hidden-text" style="font-family: serif;">
             【PIPERからの招待状】<br>
             〇〇川の下流、〇〇の丘の裏にある「廃貯水庫」。<br>
             本日 25:00（午前1:00）開演。<br><br>
@@ -111,21 +139,29 @@
     </div>
 
     <script>
+        // ①「次のページへ」ボタンを押した時の処理
+        function goToLockScreen() {
+            // 日常ブログを消して、ロック画面を表示する
+            document.getElementById("normalBlogArea").style.display = "none";
+            document.getElementById("lockScreenArea").style.display = "block";
+        }
+
+        // ② ロック画面でパスワードを入力した時の処理
         function unlockArticle() {
             let pass = document.getElementById("articlePass").value;
 
-            // パスワードが伝承の年「1284」なら
+            // パスワードが「1284」なら
             if (pass === "1284") {
-                // 1. 通常ブログを非表示にする
-                document.getElementById("normalBlogArea").style.display = "none";
+                // ロック画面を消す
+                document.getElementById("lockScreenArea").style.display = "none";
 
-                // 2. 隠しエリアを表示する
+                // 隠しエリア（真っ黒な空間）を表示する
                 document.getElementById("secretBlackArea").style.display = "block";
 
-                // 3. 画面全体の背景色を真っ黒（#000000）に書き換える
+                // 画面全体の背景色を真っ黒（#000000）に書き換える
                 document.body.style.backgroundColor = "#000000";
             } else {
-                // 不正解ならエラーメッセージを表示
+                // 不正解ならエラーを出す
                 document.getElementById("passError").style.display = "block";
             }
         }
