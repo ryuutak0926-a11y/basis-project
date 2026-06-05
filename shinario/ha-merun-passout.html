@@ -116,6 +116,8 @@
             <br><br>
             <button onclick="unlockArticle()"
                 style="padding: 10px 30px; font-size: 16px; cursor: pointer; background-color: #333; color: #fff; border: none; border-radius: 4px;">OK</button>
+            <button onclick="goBack()"
+                style="margin-left: 10px; padding: 10px 20px; font-size: 16px; cursor: pointer; background-color: #e0e0e0; color: #333; border: none; border-radius: 4px;">戻る</button>
             <p id="passError" style="color: red; display: none; margin-top: 15px;">[ERROR] パスワードが一致しません。</p>
         </div>
     </div>
@@ -134,6 +136,12 @@
             演奏会に選ばれた 130人のお客様、<br>
             皆様お揃いになるのを、心よりお待ちしております。<br>
             ──おいで、おいで。大人のいない、僕らの世界へ。
+        </div>
+
+        <!-- 前の画面に戻るボタン -->
+        <div style="text-align:center; margin-top:20px;">
+            <button onclick="goBackToLockScreen()"
+                style="padding:10px 20px; font-size:16px; cursor:pointer; background-color:#e0e0e0; color:#333; border:none; border-radius:4px;">戻る</button>
         </div>
 
     </div>
@@ -164,6 +172,22 @@
                 // 不正解ならエラーを出す
                 document.getElementById("passError").style.display = "block";
             }
+        }
+        // 前の画面に戻る（ロック画面へ）
+        function goBackToNormal() {
+            // ロック画面を非表示、日常ブログを表示
+            document.getElementById("lockScreenArea").style.display = "none";
+            document.getElementById("normalBlogArea").style.display = "block";
+            // 背景色を元に戻す
+            document.body.style.backgroundColor = "";
+        }
+
+        // 秘密エリアからロック画面へ戻る
+        function goBackToLockScreen() {
+            document.getElementById("secretBlackArea").style.display = "none";
+            document.getElementById("lockScreenArea").style.display = "block";
+            // 背景色を元に戻す
+            document.body.style.backgroundColor = "";
         }
     </script>
 
