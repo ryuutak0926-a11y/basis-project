@@ -140,7 +140,7 @@
 
         <!-- 前の画面に戻るボタン -->
         <div style="text-align:center; margin-top:20px;">
-            <button onclick="goBackToLockScreen()"
+            <button onclick="goBack()"
                 style="padding:10px 20px; font-size:16px; cursor:pointer; background-color:#e0e0e0; color:#333; border:none; border-radius:4px;">戻る</button>
         </div>
 
@@ -173,20 +173,19 @@
                 document.getElementById("passError").style.display = "block";
             }
         }
-        // 前の画面に戻る（ロック画面へ）
-        function goBackToNormal() {
-            // ロック画面を非表示、日常ブログを表示
-            document.getElementById("lockScreenArea").style.display = "none";
-            document.getElementById("normalBlogArea").style.display = "block";
-            // 背景色を元に戻す
-            document.body.style.backgroundColor = "";
-        }
-
-        // 秘密エリアからロック画面へ戻る
-        function goBackToLockScreen() {
-            document.getElementById("secretBlackArea").style.display = "none";
-            document.getElementById("lockScreenArea").style.display = "block";
-            // 背景色を元に戻す
+        // 前の画面に戻る共通関数
+        function goBack() {
+            // 秘密エリアが表示されている場合はロック画面へ戻す
+            if (document.getElementById("secretBlackArea").style.display === "block") {
+                document.getElementById("secretBlackArea").style.display = "none";
+                document.getElementById("lockScreenArea").style.display = "block";
+            }
+            // ロック画面が表示されている場合は通常ブログへ戻す
+            else if (document.getElementById("lockScreenArea").style.display === "block") {
+                document.getElementById("lockScreenArea").style.display = "none";
+                document.getElementById("normalBlogArea").style.display = "block";
+            }
+            // 背景色をリセット
             document.body.style.backgroundColor = "";
         }
     </script>
