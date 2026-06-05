@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <title>PIPER OFFICIAL BLOG</title>
+    <style>
+        /* 全体の基本設定 */
+        body {
+            background-color: #f9f9f9;
+            color: #333333;
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            transition: background-color 0.5s ease;
+            /* 暗転時のフワッとした切り替え */
+            margin: 0;
+            padding: 0;
+        }
+
+        /* ▼ 1. 通常のブログエリアのデザイン ▼ */
+        #normalBlogArea {
+            max-width: 600px;
+            margin: 50px auto;
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        /* ▼ 2. 隠しエリア（パスワード突破後に表示） ▼ */
+        #secretBlackArea {
+            display: none;
+            /* 初期状態では消しておく */
+            padding: 20px;
+            box-sizing: border-box;
+            color: #ffffff;
+            /* 基本の文字色は白（ヘッダー等のため） */
+            font-family: 'Courier New', monospace;
+            /* システム風のフォント */
+        }
+
+        /* 画面上部のシステム風ヘッダー（リファレンス再現） */
+        .system-header {
+            font-size: 14px;
+            border-bottom: 1px solid #333;
+            padding-bottom: 10px;
+            margin-bottom: 40px;
+            color: #888888;
+        }
+
+        /* 狂気を煽る赤文字 */
+        .red-message {
+            color: #ff0000;
+            text-align: center;
+            font-size: 20px;
+            letter-spacing: 2px;
+            margin-top: 50px;
+        }
+
+        /* 隠しテキスト（背景と同化する黒文字） */
+        .hidden-text {
+            color: #000000;
+            /* 背景と同じ黒色にして隠蔽 */
+            font-size: 16px;
+            line-height: 1.8;
+            margin-top: 80px;
+            text-align: center;
+            cursor: default;
+            /* カーソル変化を防ぐ */
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="normalBlogArea">
+        <h2 style="border-bottom: 2px solid #333; padding-bottom: 10px;">【シークレットライブ告知】※閲覧制限</h2>
+        <p>この記事は保護されています。閲覧するには4桁のPASSを入力してください。</p>
+
+        <div style="text-align: center; margin-top: 30px;">
+            <input type="password" id="articlePass" placeholder="****"
+                style="padding: 10px; font-size: 16px; width: 120px; text-align: center; letter-spacing: 5px;">
+            <button onclick="unlockArticle()"
+                style="padding: 10px 20px; font-size: 16px; cursor: pointer; background-color: #333; color: #fff; border: none; border-radius: 4px;">解除</button>
+            <p id="passError" style="color: red; display: none; margin-top: 15px;">[ERROR] パスワードが一致しません。</p>
+        </div>
+    </div>
+
+    <div id="secretBlackArea">
+
+        <div class="system-header">
+            grandpasdedeux * TALENT * CONTACT * VISION * ABOUT US <br>
+            【LV 3 (P 40/125)】<br><br>
+            2024.10.22 2026.05.24 内部資料：????<br>
+            ＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊
+        </div>
+
+        <div class="red-message">
+            大人たちには秘密の場所へ<br>
+            さあ、目を開いて真実を見つけて。
+        </div>
+
+        <div class="hidden-text">
+            【PIPERからの招待状】<br>
+            〇〇川の下流、〇〇の丘の裏にある「廃貯水庫」。<br>
+            本日 25:00（午前1:00）開演。<br><br>
+            演奏会に選ばれた 130人のお客様、<br>
+            皆様お揃いになるのを、心よりお待ちしております。<br>
+            ──おいで、おいで。大人のいない、僕らの世界へ。
+        </div>
+
+    </div>
+
+    <script>
+        function unlockArticle() {
+            let pass = document.getElementById("articlePass").value;
+
+            // パスワードが伝承の年「1284」なら
+            if (pass === "1284") {
+                // 1. 通常ブログを非表示にする
+                document.getElementById("normalBlogArea").style.display = "none";
+
+                // 2. 隠しエリアを表示する
+                document.getElementById("secretBlackArea").style.display = "block";
+
+                // 3. 画面全体の背景色を真っ黒（#000000）に書き換える
+                document.body.style.backgroundColor = "#000000";
+            } else {
+                // 不正解ならエラーメッセージを表示
+                document.getElementById("passError").style.display = "block";
+            }
+        }
+    </script>
+
+</body>
+
+</html>
