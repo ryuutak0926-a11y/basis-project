@@ -1,0 +1,13 @@
+import matplotlib.pyplot as mpl
+import yfinance as yf
+
+ticker = yf.Ticker ( '7203.T')
+df = ticker.history(start='2022-01-01', end='2026-05-01')
+
+print(df)
+
+mpl.figure(figsize =(16 ,6))
+mpl.plot(df['Close '])
+mpl.xlabel('Date ', fontsize =14)
+mpl.ylabel('Close Price ', fontsize =14)
+mpl.show()
