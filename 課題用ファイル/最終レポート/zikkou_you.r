@@ -21,35 +21,28 @@ functions_list <- list(
 )
 
 get_sample_points <- function(n, type) {
-    # 補間区間の下限a, 上限b
-    a <- 10
-    b <- 20
     if (type == "equal") {
-        return(seq(a, b, length.out = n))
+        return(seq(-1, 1, length.out = n))
     } else if (type == "one_side") {
         seq_01 <- seq(0, 1, length.out = n)
-        return(a + (b - a) * (seq_01^2))
+        return(-1 + 2 * (seq_01^2))
     } else if (type == "both_sides") {
-        # サイン関数の変換を用いて両端を密にし、[a, b]区間にスケーリング
         seq_scaled <- seq(-pi / 2, pi / 2, length.out = n)
-        return(a + (b - a) * (sin(seq_scaled) + 1) / 2)
+        return(sin(seq_scaled))
     } else if (type == "random") {
         if (n <= 2) {
-            return(c(a, b))
+            return(c(-1, 1))
         }
-        mid_points <- runif(n - 2, min = a, max = b)
-        return(sort(c(a, mid_points, b)))
+        mid_points <- runif(n - 2, min = -1, max = 1)
+        return(sort(c(-1, mid_points, 1)))
     }
 }
 
 run_interpolation_experiment <- function(func_name, f, n_points, node_type) {
-    # 補間区間の下限a, 上限b
-    a <- 10
-    b <- 20
     x_nodes <- get_sample_points(n_points, node_type)
     y_nodes <- f(x_nodes)
 
-    x_grid <- seq(a, b, length.out = 1000)
+    x_grid <- seq(-1, 1, length.out = 1000)
     y_true <- f(x_grid)
 
     true_amplitude <- max(y_true) - min(y_true)
@@ -106,6 +99,21 @@ run_interpolation_experiment <- function(func_name, f, n_points, node_type) {
 }
 
 par(mfrow = c(1, 1))
+
+run_interpolation_experiment("三角関数", f_sin, 5, "equal")
+run_interpolation_experiment("三角関数", f_sin, 5, "one_side")
+run_interpolation_experiment("三角関数", f_sin, 5, "both_sides")
+run_interpolation_experiment("三角関数", f_sin, 5, "random")
+
+run_interpolation_experiment("指数関数", f_exp, 5, "equal")
+run_interpolation_experiment("指数関数", f_exp, 5, "one_side")
+run_interpolation_experiment("指数関数", f_exp, 5, "both_sides")
+run_interpolation_experiment("指数関数", f_exp, 5, "random")
+
+run_interpolation_experiment("ルンゲ関数", f_runge, 5, "equal")
+run_interpolation_experiment("ルンゲ関数", f_runge, 5, "one_side")
+run_interpolation_experiment("ルンゲ関数", f_runge, 5, "both_sides")
+run_interpolation_experiment("ルンゲ関数", f_runge, 5, "random")
 
 run_interpolation_experiment("単純多項式", f_poly, 5, "equal")
 run_interpolation_experiment("単純多項式", f_poly, 5, "one_side")
