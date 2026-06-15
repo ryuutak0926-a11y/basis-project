@@ -100,19 +100,19 @@ run_interpolation_experiment <- function(func_name, f, n_points, node_type) {
 
 par(mfrow = c(1, 1))
 
-run_interpolation_experiment("三角関数", f_sin, 5, "equal")
-run_interpolation_experiment("三角関数", f_sin, 5, "one_side")
-run_interpolation_experiment("三角関数", f_sin, 5, "both_sides")
-run_interpolation_experiment("三角関数", f_sin, 5, "random")
+run_interpolation_experiment("三角関数", f_sin, 50, "equal")
+run_interpolation_experiment("三角関数", f_sin, 50, "one_side")
+run_interpolation_experiment("三角関数", f_sin, 50, "both_sides")
+run_interpolation_experiment("三角関数", f_sin, 50, "random")
 
 run_interpolation_experiment("指数関数", f_exp, 5, "equal")
 run_interpolation_experiment("指数関数", f_exp, 5, "one_side")
 run_interpolation_experiment("指数関数", f_exp, 5, "both_sides")
 run_interpolation_experiment("指数関数", f_exp, 5, "random")
 
-run_interpolation_experiment("ルンゲ関数", f_runge, 5, "equal")
-run_interpolation_experiment("ルンゲ関数", f_runge, 5, "one_side")
-run_interpolation_experiment("ルンゲ関数", f_runge, 5, "both_sides")
+run_interpolation_experiment("ルンゲ関数", f_runge, , "equal")
+run_interpolation_experiment("ルンゲ関数", f_runge, 10, "one_side")
+run_interpolation_exeriment("ルンゲ関数", f_runge, 5, "both_sides")
 run_interpolation_experiment("ルンゲ関数", f_runge, 5, "random")
 
 run_interpolation_experiment("単純多項式", f_poly, 5, "equal")
