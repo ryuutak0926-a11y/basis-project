@@ -1,180 +1,136 @@
-<!DOCTYPE html>
-<html lang="ja">
+<script type="module">
+    // 1. いただいたFirebase基本機能のインポート
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-analytics.js";
 
-<head>
-    <meta charset="UTF-8">
-    <title>PIPER OFFICIAL BLOG</title>
-    <style>
-        /* 全体の基本設定 */
-        body {
-            background-color: #f9f9f9;
-            color: #333333;
-            font-family: 'Helvetica Neue', Arial, sans-serif;
-            transition: background-color 0.5s ease;
-            /* 暗転時のフワッとした切り替え */
-            margin: 0;
-            padding: 0;
+    // 2. ★追加：TRPGのリアルタイム通信ギミックに必要なDatabase機能のインポート
+    import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-database.js";
+
+    // いただいたFirebase設定
+    const firebaseConfig = {
+        apiKey: "AIzaSyA778ia-qlR6i8RphVxzqrZWm7UNIFly5I",
+        authDomain: "shinario-sns.firebaseapp.com",
+        projectId: "shinario-sns",
+        storageBucket: "shinario-sns.firebasestorage.app",
+        messagingSenderId: "878950929651",
+        appId: "1:878950929651:web:63883518f923393c725386",
+        measurementId: "G-1N133S0WZR"
+    };
+
+    // Firebaseの初期化
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
+    const db = getDatabase(app); // データベースの初期化
+
+    // ========================================================
+    // ⚙️ 既存のシステム変数
+    // ========================================================
+    let currentScenario = "ch1";
+    let hasCopiedSecret = false;
+    let timerDuration = 600000;
+
+    // ========================================================
+    // 📱 アプリUI操作関数（HTMLから呼べるように window. に紐付け）
+    // ========================================================
+
+    window.switchApp = function (appName) {
+        if (document.getElementById("secretBlackArea").style.display === "block" && appName !== 'blog') {
+            alert("画面がハッキングされており、ホームに戻れません。");
+            return;
         }
+        document.querySelectorAll('.app-page').forEach(page => page.classList.remove('active'));
+        document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
 
-        /* ▼ 1. 日常ブログエリアのデザイン ▼ */
-        #normalBlogArea {
-            max-width: 600px;
-            margin: 50px auto;
-            background-color: #ffffff;
-            padding: 40px;
-            border-radius: 8px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        if (appName === 'blog') {
+            document.getElementById('page-blog').classList.add('active');
+            document.querySelector('.nav-item:nth-child(1)').classList.add('active');
+        } else if (appName === 'mail') {
+            document.getElementById('page-mail').classList.add('active');
+            document.querySelector('.nav-item:nth-child(2)').classList.add('active');
+            document.getElementById("mailBadge").style.display = "none";
         }
+    };
 
-        /* 日常ブログの記事ごとの枠 */
-        .blog-post {
-            border-bottom: 1px solid #ddd;
-            padding-bottom: 20px;
-            margin-bottom: 20px;
-        }
+    window.goToLockScreen = function () {
+        document.getElementById("normalBlogArea").style.display = "none";
+        document.getElementById("lockScreenArea").style.display = "block";
+        document.getElementById("passError").style.display = "none";
+    };
 
-        .blog-post h3 {
-            margin-top: 0;
-            color: #444;
-        }
+    window.goBackToNormal = function () {
+        document.getElementById("lockScreenArea").style.display = "none";
+        document.getElementById("normalBlogArea").style.display = "block";
+    };
 
-        .blog-date {
-            font-size: 12px;
-            color: #888;
-        }
+    window.unlockArticle = function () {
+        let pass = document.getElementById("articlePass").value;
+        if (pass === "1284") {
+            document.getElementById("lockScreenArea").style.display = "none";
+            document.getElementById("secretBlackArea").style.display = "block";
 
-        /* ▼ 2. ロック画面エリア（最初は非表示） ▼ */
-        #lockScreenArea {
-            display: none;
-            /* 初期状態では隠す */
-            max-width: 600px;
-            margin: 50px auto;
-            background-color: #ffffff;
-            padding: 50px 40px;
-            border-radius: 8px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            text-align: center;
-        }
-
-        /* ▼ 3. 隠しエリア（パスワード突破後に表示） ▼ */
-        #secretBlackArea {
-            display: none;
-            /* 初期状態では隠す */
-            height: 100vh;
-            padding-top: 150px;
-            box-sizing: border-box;
-            color: #ffffff;
-        }
-
-        /* 隠しテキスト（背景と同化する黒文字） */
-        .hidden-text {
-            color: #000000;
-            /* 背景と同じ黒色にして隠蔽 */
-            font-size: 16px;
-            line-height: 1.8;
-            margin-top: 80px;
-            text-align: center;
-            cursor: default;
-            /* カーソル変化を防ぐ */
-        }
-    </style>
-</head>
-
-<body>
-
-    <div id="normalBlogArea">
-        <h2 style="border-bottom: 2px solid #333; padding-bottom: 10px;">PIPER OFFICIAL BLOG</h2>
-
-        <div class="blog-post">
-            <h3>新しい機材を導入しました</h3>
-            <p class="blog-date">202X.05.10</p>
-            <p>最近、音の鳴りが少し気になっていたので、新しいミキサーとマイクを導入しました。これでさらに良い音をみんなに届けられると思います。深夜の作業が捗りますね。</p>
-        </div>
-
-        <div class="blog-post">
-            <h3>雨の日の散歩</h3>
-            <p class="blog-date">202X.05.15</p>
-            <p>雨の音は好きです。すべてを洗い流してくれるような気がして。今日も良いインスピレーションが湧きそうです。次のトラックを楽しみにしていてください。</p>
-        </div>
-
-        <div style="text-align: center; margin-top: 40px;">
-            <button onclick="goToLockScreen()"
-                style="padding: 10px 20px; font-size: 16px; cursor: pointer; background-color: #e0e0e0; color: #333; border: none; border-radius: 4px;">次のページ（古い記事）へ</button>
-        </div>
-    </div>
-
-    <div id="lockScreenArea">
-        <h2 style="color: #d9534f; letter-spacing: 2px;">【制限エリア】</h2>
-        <p style="font-weight: bold; line-height: 1.8; margin-bottom: 30px;">
-            このページはゲストの方は閲覧が出来ません<br>
-            パスワードを入力してください
-        </p>
-
-        <div style="text-align: center;">
-            <input type="password" id="articlePass" placeholder="****"
-                style="padding: 10px; font-size: 16px; width: 120px; text-align: center; letter-spacing: 5px;">
-            <br><br>
-            <button onclick="unlockArticle()"
-                style="padding: 10px 30px; font-size: 16px; cursor: pointer; background-color: #333; color: #fff; border: none; border-radius: 4px;">OK</button>
-            <button onclick="goBackToNormal()"
-                style="margin-left: 10px; padding: 10px 20px; font-size: 16px; cursor: pointer; background-color: #e0e0e0; color: #333; border: none; border-radius: 4px;">戻る</button>
-            <p id="passError" style="color: red; display: none; margin-top: 15px;">[ERROR] パスワードが一致しません。</p>
-        </div>
-    </div>
-
-    <div id="secretBlackArea">
-
-        <div style="color: #ff0000; text-align: center; font-size: 24px; letter-spacing: 2px; font-family: serif;">
-            大人たちには秘密の場所へ<br>
-            さあ、目を開いて真実を見つけて。
-        </div>
-
-        <div class="hidden-text" style="font-family: serif;">
-            【PIPERからの招待状】<br>
-            〇〇川の下流、〇〇の丘の裏にある「廃貯水庫」。<br>
-            本日 25:00（午前1:00）開演。<br><br>
-            演奏会に選ばれた 130人のお客様、<br>
-            皆様お揃いになるのを、心よりお待ちしております。<br>
-            ──おいで、おいで。大人のいない、僕らの世界へ。
-        </div>
-
-        <!-- 前の画面に戻るボタン -->
-        <div style="text-align:center; margin-top:20px;">
-            <button onclick="goBackToLockScreen()"
-                style="padding:10px 20px; font-size:16px; cursor:pointer; background-color:#e0e0e0; color:#333; border:none; border-radius:4px;">戻る</button>
-        </div>
-
-    </div>
-
-    <script>
-        // ①「次のページへ」ボタンを押した時の処理
-        function goToLockScreen() {
-            // 日常ブログを消して、ロック画面を表示する
-            document.getElementById("normalBlogArea").style.display = "none";
-            document.getElementById("lockScreenArea").style.display = "block";
-        }
-
-        // ② ロック画面でパスワードを入力した時の処理
-        function unlockArticle() {
-            let pass = document.getElementById("articlePass").value;
-
-            // パスワードが「1284」なら
-            if (pass === "1284") {
-                // ロック画面を消す
-                document.getElementById("lockScreenArea").style.display = "none";
-
-                // 隠しエリア（真っ黒な空間）を表示する
-                document.getElementById("secretBlackArea").style.display = "block";
-
-                // 画面全体の背景色を真っ黒（#000000）に書き換える
-                document.body.style.backgroundColor = "#000000";
+            if (currentScenario === "ch1") {
+                document.getElementById("secretRedMessage").innerHTML = "大人たちには秘密の場所へ<br>さあ、目を開いて真実を見つけて。";
+                document.getElementById("secretHiddenText").innerHTML = `【PIPERからの招待状】<br>〇〇川の下流、〇〇の丘の裏にある「廃貯水庫」。<br>本日 25:00（午前1:00）開演。<br><br>演奏会に選ばれた 130人のお客様、<br>皆様お揃いになるのを、心よりお待ちしております。<br>──おいで、おいで。大人のいない、僕らの世界へ。`;
             } else {
-                // 不正解ならエラーを出す
-                document.getElementById("passError").style.display = "block";
+                document.getElementById("secretRedMessage").innerHTML = "<span style='font-size:26px;'>オカアサンダヨ。アケテオクレ</span>";
+                document.getElementById("secretHiddenText").innerHTML = `【WOLFの捕食命令：対象（子山羊）の洗脳シーケンス】<br>作戦時刻 25:15 ターゲットに内側から電子ロックを解除させ、侵入を開始せよ。<br>周波数・音響データの偽装率を上げ、完璧な母親の声を構築中。<br>人間どもを1匹残らず捕食（ころす）コードを実行します。`;
             }
+        } else {
+            document.getElementById("passError").style.display = "block";
         }
-    </script>
+    };
 
-</body>
+    window.goBackToLockScreen = function () {
+        document.getElementById("secretBlackArea").style.display = "none";
+        document.getElementById("lockScreenArea").style.display = "block";
+        document.getElementById("articlePass").value = "";
+    };
 
-</html>
+    // ヘンダーソン社のメール受信演出
+    window.openHendersonMail = function () {
+        alert(
+            "[SENDER: H.L.D. SPECIAL-LOG]\n" +
+            "--------------------------------------------------\n" +
+            "[PROTOCOL] 感情操作シーケンス：EXECUTE準備完了\n\n" +
+            "対象個体の感情ログより『生存本能（恐怖）』のデリートパッチを確認。\n" +
+            "代替プロトコルとして、当該精神状態に『秩序・善悪』を付与します。\n\n" +
+            "警告：突入と同時に精神汚染防壁（メンタル・ファイアウォール）の更新を行います。\n" +
+            "くれぐれも、ご留意いただきたい。"
+        );
+    };
+
+    // ========================================================
+    // 🌟 自動タイマー ＆ Firebaseの遠隔ハッキング準備
+    // ========================================================
+
+    // コピペ検知（今まで通りのローカルタイマー機能）
+    document.getElementById("secretHiddenText").addEventListener('copy', triggerCh1Timer);
+    document.getElementById("secretHiddenText").addEventListener('cut', triggerCh1Timer);
+
+    function triggerCh1Timer() {
+        if (hasCopiedSecret) return;
+        hasCopiedSecret = true;
+        console.log("コピペを検知。タイマーを開始します。");
+
+        setTimeout(() => {
+            document.getElementById("hendersonMail").style.display = "block";
+            document.getElementById("mailBadge").style.display = "inline-block";
+        }, timerDuration);
+    }
+
+    /* * 【実装予定】Firebase Realtime Database のリスナー
+     * KPが自分の管理画面からデータベースの値を変更した瞬間、
+     * PLの画面でこの中の処理が自動的に走るようになります。
+     */
+    const triggerRef = ref(db, 'session/hld_email_trigger');
+    onValue(triggerRef, (snapshot) => {
+        const data = snapshot.val();
+        // もしKPがデータベースの値を "ON" にしたら、タイマーを待たずに強制受信させる
+        if (data === "ON") {
+            document.getElementById("hendersonMail").style.display = "block";
+            document.getElementById("mailBadge").style.display = "inline-block";
+            console.log("KPからのFirebaseリアルタイム通信を受信！メールを強制表示しました。");
+        }
+    });
+
+</script>

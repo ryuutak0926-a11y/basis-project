@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <title>KP専用 遠隔ハッキングパネル</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            background-color: #222;
+            color: #fff;
+            padding: 30px;
+            text-align: center;
+        }
+
+        button {
+            padding: 15px 30px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 8px;
+            border: none;
+            margin: 10px;
+        }
+
+        .btn-fire {
+            background-color: #d9534f;
+            color: white;
+        }
+
+        .btn-reset {
+            background-color: #5bc0de;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h2>👁️ H.L.D. システム司令塔（KP専用）</h2>
+    <p>このボタンを押すと、リアルタイムでPLの画面に干渉します。</p>
+
+    <button class="btn-fire" onclick="fireEmailTrigger()">📧 【第1話】PL画面に緊急メールを強制着信</button>
+    <br><br>
+    <button class="btn-reset" onclick="resetTrigger()">🔄 トリガーをリセット（テストのやり直し用）</button>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
+        import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-database.js";
+
+        // Firebaseの設定（PL用と同じもの）
+        const firebaseConfig = {
+            apiKey: "AIzaSyA778ia-qlR6i8RphVxzqrZWm7UNIFly5I",
+            authDomain: "shinario-sns.firebaseapp.com",
+            projectId: "shinario-sns",
+            storageBucket: "shinario-sns.firebasestorage.app",
+            messagingSenderId: "878950929651",
+            appId: "1:878950929651:web:63883518f923393c725386",
+            measurementId: "G-1N133S0WZR"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        // ボタンが押されたら、Firebaseの値を "ON" に書き換える
+        window.fireEmailTrigger = function () {
+            set(ref(db, 'session/hld_email_trigger'), "ON")
+                .then(() => alert("送信成功！PLの画面にメールが着信しました。"))
+                .catch((error) => alert("エラー: " + error));
+        };
+
+        // 次のテストのために "OFF" に戻す
+        window.resetTrigger = function () {
+            set(ref(db, 'session/hld_email_trigger'), "OFF")
+                .then(() => alert("リセット完了。"));
+        };
+    </script>
+</body>
+
+</html>
