@@ -1,12 +1,15 @@
-'use strict';
+const text = document.querySelector('#colorText');
+const color = document.querySelector('#colorPicker');
 
-// console.log(100);
-// console.log(1.2e4);
-
-/*これで何行でも消せる*/
-//これで色々消せるよ
-
-// alert("hello world");
-function ohayou() {
-    alert("HELLO");
+const colorBg = () => {
+    document.body.style.background = color.value;
+    if (color.value === '#ffffff') {
+        text.textContent = `カラーコード: ${color.value}(white)`;
+    } else if (color.value === '#000000') {
+        text.textContent = `カラーコード: ${color.value}(black)`;
+    } else {
+        text.textContent = `カラーコード: ${color.value}`;
+    }
 }
+color.addEventListener('input', colorBg);
+
