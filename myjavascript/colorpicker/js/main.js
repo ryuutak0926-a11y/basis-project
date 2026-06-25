@@ -1,6 +1,6 @@
 const text = document.querySelector('#colorText');
 const color = document.querySelector('#colorPicker');
-
+console.log(document.querySelector('#colorPicker').value)
 const colorBg = () => {
     document.body.style.background = color.value;
     if (color.value === '#ffffff') {

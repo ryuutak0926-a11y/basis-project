@@ -1,0 +1,11 @@
+#htmlの備忘録
+-<input type="text"> テキストを入力するためのボックス
+-<input type="color"> カラーコードを入力するためのボックス
+-<input type="date"> 日付を入力するためのボックス
+-<input type="number"> 数値を入力するためのボックス
+-<input type="range"> スライダー
+-<input type="checkbox"> チェックボックス
+-<input type="radio"> ラジオボタン
+-<input type="button"> ボタン
+-<input type="submit"> 送信ボタン
+-<input type="reset"> リセットボタン
