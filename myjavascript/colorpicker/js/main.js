@@ -1,15 +1,17 @@
 const text = document.querySelector('#colorText');
 const color = document.querySelector('#colorPicker');
 console.log(document.querySelector('#colorPicker').value)
+const colorNames = {
+    '#ffffff': '(white)',
+    '#000000': '(black)',
+    '#ff0000': '(red)',
+    '#00ff00': '(green)'
+};
 const colorBg = () => {
     document.body.style.background = color.value;
-    if (color.value === '#ffffff') {
-        text.textContent = `カラーコード: ${color.value}(white)`;
-    } else if (color.value === '#000000') {
-        text.textContent = `カラーコード: ${color.value}(black)`;
-    } else {
-        text.textContent = `カラーコード: ${color.value}`;
-    }
+    const name = colorNames[color.value] || '';
+    text.textContent = `カラーコード: ${color.value} ${name}`;
 }
 color.addEventListener('input', colorBg);
+
 
