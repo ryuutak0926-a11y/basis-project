@@ -5,17 +5,11 @@ body {
 
 #menu {
     display: grid;
-    gap: 30px;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
     max-width: 1020px;
     margin: auto;
     padding: 30px;
-}
-
-img {
-    width: 100%;
-    aspect-ratio: 4/3;
-    object-fit: 40px;
 }
 
 h1 {
