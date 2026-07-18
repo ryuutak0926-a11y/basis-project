@@ -16,8 +16,343 @@ nav {
 
 .open nav {
     left: 0;
-    ;
     opacity: 1;
 }
 
-nav .inner
+nav .inner {
+    padding: 25px;
+}
+
+nav .inner ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+nav .inner ul li {
+    position: relative;
+    margin: 0;
+    border-bottom: 1px solid #333;
+}
+
+nav .inner ul li a {
+    display: block;
+    color: #333;
+    font-size: 14px;
+    padding: 1em;
+    text-decoration: none;
+    transition-duration: 0.2s;
+}
+
+nav .inner ul li a:hover {
+    background: #e4e4e4;
+}
+
+@media screen and (max-width: 767px) {
+    nav {
+        left: -220px;
+        width: 220px;
+    }
+}
+
+.toggle_btn {
+    display: block;
+    position: fixed;
+    top: 30px;
+    left: 30px;
+    width: 30px;
+    height: 30px;
+    transition: all .5s;
+    cursor: pointer;
+    z-index: 3;
+}
+
+.open .toggle_btn {
+    left: 330px;
+}
+
+.toggle_btn span {
+    display: block;
+    position: absolute;
+    left: 0;
+    width: 30px;
+    height: 2px;
+    background-color: #333;
+    border-radius: 4px;
+    transition: all .5s;
+}
+
+.toggle_btn span:nth-child(1) {
+    top: 4px;
+}
+
+.toggle_btn span:nth-child(2) {
+    top: 14px;
+}
+
+.toggle_btn span:nth-child(3) {
+    bottom: 4px;
+}
+
+.open .toggle_btn span {
+    background-color: #fff;
+}
+
+.open .toggle_btn {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+}
+
+.open .toggle_btn span:nth-child(1),
+.open .toggle_btn span:nth-child(3) {
+    width: 16px;
+}
+
+.open .toggle_btn span:nth-child(1) {
+    -webkit-transform: translate(-1px, 4px) rotate(-45deg);
+    transform: translate(-1px, 4px) rotate(-45deg);
+}
+
+.open .toggle_btn span:nth-child(3) {
+    -webkit-transform: translate(-1px, -4px) rotate(45deg);
+    transform: translate(-1px, -4px) rotate(45deg);
+}
+
+@media screen and (max-width: 767px) {
+    .open .toggle_btn {
+        left: 250px;
+    }
+}
+
+#mask {
+    display: none;
+    transition: all .5s;
+}
+
+.open #mask {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #000;
+    opacity: .8;
+    z-index: 2;
+    cursor: pointer;
+}
+
+main {
+    width: 100%;
+    padding: 50px 0;
+    transition: all .5s;
+}
+
+.open main {
+    margin-left: 300px;
+}
+
+main h1 {
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 400;
+    text-align: center;
+}
+
+body {
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 400;
+    overflow: hidden;
+}
+
+
+/* ============nav=============
+nav {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: -300px;
+    bottom: 0;
+    width: 300px;
+    background: #ffffff;
+    overflow-x: hidden;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    transition: all .5s;
+    z-index: 3;
+    opacity: 0;
+}
+
+.open nav {
+    left: 0;
+    opacity: 1;
+}
+
+nav .inner {
+    padding: 25px;
+}
+
+nav .inner ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+nav .inner ul li {
+    position: relative;
+    margin: 0;
+    border-bottom: 1px solid #333;
+}
+
+nav .inner ul li a {
+    display: block;
+    color: #333;
+    font-size: 14px;
+    padding: 1em;
+    text-decoration: none;
+    transition-duration: 0.2s;
+}
+
+nav .inner ul li a:hover {
+    background: #e4e4e4;
+}
+
+@media screen and (max-width: 767px) {
+    nav {
+        left: -220px;
+        width: 220px;
+    }
+}
+
+/*============.toggle_btn=============*/
+.toggle_btn {
+    display: block;
+    position: fixed;
+    top: 30px;
+    left: 30px;
+    width: 30px;
+    height: 30px;
+    transition: all .5s;
+    cursor: pointer;
+    z-index: 4;
+    /* 💡ナビやマスクの上に確実に乗るように3から4へ変更 */
+}
+
+.open .toggle_btn {
+    left: 330px;
+}
+
+.toggle_btn span {
+    display: block;
+    position: absolute;
+    left: 0;
+    width: 30px;
+    height: 2px;
+    background-color: #333;
+    border-radius: 4px;
+    transition: all .5s;
+}
+
+.toggle_btn span:nth-child(1) {
+    top: 4px;
+}
+
+.toggle_btn span:nth-child(2) {
+    top: 14px;
+}
+
+.toggle_btn span:nth-child(3) {
+    bottom: 4px;
+}
+
+/* 💡メニューが開いた時、白背景（#fff）の上にボタンが移動するため、
+   線の色を白いまま（#fff）にすると消えて見えなくなってしまいます。
+   黒（#333）のままにするか、目立つ色にするのがおすすめです。 */
+.open .toggle_btn span {
+    background-color: #333;
+}
+
+.open .toggle_btn {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+}
+
+.open .toggle_btn span:nth-child(1),
+.open .toggle_btn span:nth-child(3) {
+    width: 16px;
+}
+
+.open .toggle_btn span:nth-child(1) {
+    -webkit-transform: translate(-1px, 4px) rotate(-45deg);
+    transform: translate(-1px, 4px) rotate(-45deg);
+}
+
+/* 💡真ん中の線（2本目）を透明にして消さないと綺麗に「✕」に見えないため、この1箇所の処理を追加しています */
+.open .toggle_btn span:nth-child(2) {
+    opacity: 0;
+}
+
+.open .toggle_btn span:nth-child(3) {
+    -webkit-transform: translate(-1px, -4px) rotate(45deg);
+    transform: translate(-1px, -4px) rotate(45deg);
+}
+
+@media screen and (max-width: 767px) {
+    .open .toggle_btn {
+        left: 240px;
+        /* 💡はみ出しを防ぐために250pxから240pxに微調整しました */
+    }
+}
+
+/*============#mask=============*/
+#mask {
+    display: none;
+    transition: all .5s;
+}
+
+.open #mask {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #000;
+    opacity: .8;
+    z-index: 2;
+    cursor: pointer;
+}
+
+/*============main=============*/
+main {
+    width: 100%;
+    padding: 50px 0;
+    transition: all .5s;
+}
+
+.open main {
+    margin-left: 300px;
+}
+
+@media screen and (max-width: 767px) {
+
+    /* 💡スマホの時はメインコンテンツの押し出し幅もメニュー幅（220px）に合わせます */
+    .open main {
+        margin-left: 220px;
+    }
+}
+
+main h1 {
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 400;
+    text-align: center;
+}
+
+/*============body=============*/
+body {
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 400;
+    overflow-x: hidden;
+    /* 💡メニューが出た時の画面全体の横スクロールバグを防ぎます */
+}
+
+*/
